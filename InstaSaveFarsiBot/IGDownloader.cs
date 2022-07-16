@@ -4,7 +4,6 @@ using Newtonsoft.Json.Linq;
 
 namespace InstaSaveFarsi.IGD;
 
-
 public class IGDownloader
 {
     public string GetLink(string url)
