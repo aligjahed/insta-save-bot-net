@@ -2,10 +2,14 @@
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
 using DotNetEnv;
-using InstaSaveFarsiBot.BotConfiguration;
+using InstaSaveFarsiBot.Config;
+using InstaSaveFarsiBot.UpdateHandlers;
+using InstaSaveFarsiBot.States;
 
 // Load Enviremont variables from .env file
 Env.TraversePath().Load();
+
+var state = new ConversationState();
 
 
 var bot = new TelegramBotClient(BotConfiguration.BotToken);
@@ -22,10 +26,12 @@ var receiverOptions = new ReceiverOptions()
     ThrowPendingUpdates = true,
 };
 
-bot.StartReceiving(updateHandler: UpdateHandlers.HandleUpdateAsync,
-                   pollingErrorHandler: UpdateHandlers.PollingErrorHandler,
-                   receiverOptions: receiverOptions,
-                   cancellationToken: cts.Token);
+bot.StartReceiving(updateHandler: CommandHandler.HandleUpdateAsync,
+               pollingErrorHandler: CommandHandler.PollingErrorHandler,
+               receiverOptions: receiverOptions,
+               cancellationToken: cts.Token);
+
+
 
 Console.WriteLine($"Start listening for @{me.Username}");
 Console.ReadLine();
