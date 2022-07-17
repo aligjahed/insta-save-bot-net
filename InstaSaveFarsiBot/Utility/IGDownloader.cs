@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
 
 namespace InstaSaveFarsiBot.Utility;
 
@@ -8,7 +7,7 @@ public class IGDownloader
 {
     public async Task<string> GetLink(string url)
     {
-        string mainUrl = await MakeLink(url);
+        string mainUrl = MakeLink(url);
 
         // getting html data for provided url
         WebRequest req = WebRequest.Create(mainUrl);
@@ -17,17 +16,17 @@ public class IGDownloader
         StreamReader sr = new StreamReader(stream);
         string html = sr.ReadToEnd();
 
-        return await GetUrl(html, mainUrl);
+        return GetUrl(html, mainUrl);
     }
 
-    private async Task<string> MakeLink(string url)
+    private string MakeLink(string url)
     {
         string[] splittedUrl = url.Split("/");
         string mainLink = $"{splittedUrl[0]}//{splittedUrl[2]}/{splittedUrl[3]}/{splittedUrl[4]}/embed";
         return mainLink;
     }
 
-    private async Task<string> GetUrl(string html, string url)
+    private string GetUrl(string html, string url)
     {
         // checking for post type
         if (html.Contains("video_url"))
@@ -46,10 +45,7 @@ public class IGDownloader
         int start = html.IndexOf("video_url");
         int end = start + 1000;
         string finalLink = "{" + '"' + html[start..end];
-        finalLink = finalLink.Substring(0, finalLink.IndexOf(",")) + "}";
-
-        // parse link object to json
-        JObject finalLinkJson = JObject.Parse(finalLink);
+        finalLink = finalLink.Substring(0, finalLink.IndexOf(",")) + ", " + '"' + "type" + '"' + ":" + '"' + "video" + '"' +  "}";
 
         return finalLink;
     }
@@ -65,6 +61,7 @@ public class IGDownloader
         var baseLink = node.GetAttributeValue("src", "notFound");
 
         string finalLink = MakeFinalLink(baseLink);
+        finalLink = "{" + '"' + "photo_url" + '"' + ":" + '"' + finalLink + '"' + "," + '"' + "type" + '"' + ":" + '"' + "photo" + '"' + "}" ;
 
         return finalLink;
     }

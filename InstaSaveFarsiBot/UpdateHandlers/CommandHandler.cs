@@ -5,6 +5,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using InstaSaveFarsiBot.States;
 using InstaSaveFarsiBot.Utility;
+using Newtonsoft.Json.Linq;
 
 namespace InstaSaveFarsiBot.UpdateHandlers;
 
@@ -116,32 +117,66 @@ public static class CommandHandler
 
         static async Task<Message> getPost(ITelegramBotClient botClient, Message message)
         {
+            string captionText = "⭕️❗️اینستاگرام دانلودر فارسی❗️⭕ \n\n 🔵 @InstaSaveFarsi_bot 🔵";
+
+            await botClient.SendTextMessageAsync(
+                chatId: message.Chat.Id,
+                text: "لطفا صبر کنید... ⚠️"
+                );
+
             var igd = new IGDownloader();
 
             try
             {
-                string link = await igd.GetLink(message.Text);
-                return await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: link);
+                string link = await igd.GetLink(url: message.Text);
+
+                JObject linkOBJ = JObject.Parse(link);
+                string linkType = (string)linkOBJ["type"];
+
+
+                if (linkType == "video")
+                {
+                    return await botClient.SendVideoAsync(
+                        chatId: message.Chat.Id,
+                        video: (string)linkOBJ["video_url"],
+                        supportsStreaming: true ,
+                        caption: captionText
+                        );
+                }
+                else if (linkType == "photo")
+                {
+                    return await botClient.SendPhotoAsync(
+                        chatId: message.Chat.Id,
+                        photo: (string)linkOBJ["photo_url"],
+                        caption: captionText
+                        );
+                }
+
+
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
-                return await botClient.SendTextMessageAsync(chatId: message.Chat.Id, text: "there was an error");
+                return await botClient.SendTextMessageAsync(
+                    chatId: message.Chat.Id,
+                    text: "مشکلی رخ داد... مجددا تلاش کنید. 🚫");
             }
             finally
             {
                 state.isDownload = false;
             }
 
-
+            Message emptyMessage = new Message { Text = "Completed" };
+            return emptyMessage;
         }
 
         static async Task<Message> Usage(ITelegramBotClient botClient, Message message)
         {
 
-            const string usage = "Usage:\n" +
-                                 "/start   - send inline keyboard\n" +
-                                 "/download  - request location or contact";
+            const string usage = "🚫دستور یافت نشد  \n\n" +
+                                 "⚠️ لیست دستورات : \n\n" +
+                                 "/download  - ذخیره محتوای مورد نظر \n" +
+                                 "/help   - راهنمای استفاده از ربات";
 
             return await botClient.SendTextMessageAsync(chatId: message.Chat.Id,
                                                         text: usage,
@@ -152,8 +187,22 @@ public static class CommandHandler
     // Process Inline Keyboard callback data
     private static async Task BotOnCallbackQueryReceived(ITelegramBotClient botClient, CallbackQuery callbackQuery)
     {
-        Message dataTransfer = new Message { Text = callbackQuery.Data };
+        string DLMessage = "لطفا لینک پست مورد نظر را ارسال کنید. 🌐";
 
+        await botClient.AnswerCallbackQueryAsync(
+            callbackQueryId: callbackQuery.Id
+            );
+
+        if (callbackQuery.Data == "/download")
+        {
+
+            await botClient.SendTextMessageAsync(
+                chatId: callbackQuery.Message!.Chat.Id,
+                text: DLMessage
+                );
+        }
+
+        Message dataTransfer = new Message { Text = callbackQuery.Data };
         await BotOnMessageReceived(botClient, dataTransfer);
 
     }
