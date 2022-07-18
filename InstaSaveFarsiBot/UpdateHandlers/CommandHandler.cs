@@ -76,6 +76,10 @@ public static class CommandHandler
             {
                 Message sentMessage = await onDownload(botClient, message);
             }
+            else if (messageText == "/help")
+            {
+                Message sentMessage = await onHelp(botClient, message);
+            }
             else if (state.isDownload != true)
             {
                 Message sentMessage = await Usage(botClient, message);
@@ -114,6 +118,29 @@ public static class CommandHandler
                 text: newMessage
                 );
 
+        }
+
+        static async Task<Message> onHelp(ITelegramBotClient botClient, Message message)
+        {
+            string captionText = "🔴 ابتدا لینک پست مورد نظر را با طی کردن مراحل مشخص شده در عکس کپی کنید. ( توجه کنید پست انتخابی نباید از یک پیج خصوصی باشد ) \n\n" +
+                                 "🔵 سپس با ارسال دستور /download و یا انتخاب آن از منوی دستورات منتظر پاسخ ربات باشید. \n\n" +
+                                 "🟢 حالا با ارسال لینک کپی شده در مراحل قبل برای ربات و کمی انتظار محتوای پست مورد نظر را دریافت و در گالری ذخیره کنید. \n\n" +
+                                 "⭕️❗️اینستاگرام دانلودر فارسی❗️⭕️ \n\n" +
+                                 "🔵 @InstaSaveFarsi_bot 🔵";
+
+            InlineKeyboardMarkup inlineKeyboard = new(
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData("دریافت پست" , "/download")
+                }
+                );
+
+            return await botClient.SendPhotoAsync(
+                chatId: message.Chat.Id,
+                photo: "https://www.dropbox.com/s/zdj91kp22ftbiwz/MainHelp.jpg?raw=1",
+                caption: captionText,
+                replyMarkup: inlineKeyboard
+                );
         }
 
         static async Task<Message> getPost(ITelegramBotClient botClient, Message message)
@@ -196,11 +223,10 @@ public static class CommandHandler
 
         if (callbackQuery.Data == "/download")
         {
-
             await botClient.SendTextMessageAsync(
-                chatId: callbackQuery.Message!.Chat.Id,
-                text: DLMessage
-                );
+            chatId: callbackQuery.Message!.Chat.Id,
+            text: DLMessage
+            );
         }
 
         Message dataTransfer = new Message { Text = callbackQuery.Data };
