@@ -6,12 +6,11 @@ using InstaSaveFarsiBot.Config;
 using InstaSaveFarsiBot.UpdateHandlers;
 using InstaSaveFarsiBot.States;
 
-// Load Enviremont variables from .env file
-Env.TraversePath().Load();
-
-
 var state = new ConversationState();
-var testAccId = 444898015;
+
+// Load Enviremont variables from .env file
+if (state.isDevelopment == true) Env.TraversePath().Load();
+
 
 
 var bot = new TelegramBotClient(BotConfiguration.BotToken);
@@ -28,8 +27,6 @@ var receiverOptions = new ReceiverOptions()
     ThrowPendingUpdates = true,
 };
 
-await bot.SendTextMessageAsync(chatId: testAccId, text: "Bot started running");
-
 bot.StartReceiving(updateHandler: CommandHandler.HandleUpdateAsync,
                pollingErrorHandler: CommandHandler.PollingErrorHandler,
                receiverOptions: receiverOptions,
@@ -38,7 +35,7 @@ bot.StartReceiving(updateHandler: CommandHandler.HandleUpdateAsync,
 
 
 Console.WriteLine($"Start listening for @{me.Username}");
-await Task.Delay(int.MaxValue);
+Task.Delay(int.MaxValue).Wait();
 Console.ReadLine();
 
 // Send cancellation request to stop bot
