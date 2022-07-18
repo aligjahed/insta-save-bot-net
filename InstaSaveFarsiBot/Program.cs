@@ -35,6 +35,7 @@ bot.StartReceiving(updateHandler: CommandHandler.HandleUpdateAsync,
 
 
 Console.WriteLine($"Start listening for @{me.Username}");
+await Task.Delay(int.MaxValue);
 Console.ReadLine();
 
 // Send cancellation request to stop bot
