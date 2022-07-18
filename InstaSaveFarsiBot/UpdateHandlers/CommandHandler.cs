@@ -227,9 +227,28 @@ public static class CommandHandler
             chatId: callbackQuery.Message!.Chat.Id,
             text: DLMessage
             );
-        }else if (callbackQuery.Data == "/help")
+        }
+        else if (callbackQuery.Data == "/help")
         {
-            await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: "راهنما :");
+            string captionText = "🔴 ابتدا لینک پست مورد نظر را با طی کردن مراحل مشخص شده در عکس کپی کنید. ( توجه کنید پست انتخابی نباید از یک پیج خصوصی باشد ) \n\n" +
+                     "🔵 سپس با ارسال دستور /download و یا انتخاب آن از منوی دستورات منتظر پاسخ ربات باشید. \n\n" +
+                     "🟢 حالا با ارسال لینک کپی شده در مراحل قبل برای ربات و کمی انتظار محتوای پست مورد نظر را دریافت و در گالری ذخیره کنید. \n\n" +
+                     "⭕️❗️اینستاگرام دانلودر فارسی❗️⭕️ \n\n" +
+                     "🔵 @InstaSaveFarsi_bot 🔵";
+
+            InlineKeyboardMarkup inlineKeyboard = new(
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData("دریافت پست" , "/download")
+                }
+                );
+
+            await botClient.SendPhotoAsync(
+                chatId: callbackQuery.Message!.Chat.Id,
+                photo: "https://www.dropbox.com/s/zdj91kp22ftbiwz/MainHelp.jpg?raw=1",
+                caption: captionText,
+                replyMarkup: inlineKeyboard
+                );
         }
 
         Message dataTransfer = new Message { Text = callbackQuery.Data };
