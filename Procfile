@@ -1,1 +1,1 @@
-worker: cd $HOME/heroku_output/ && ./InstaSaveFarsiNet
+worker: cd $HOME/heroku_output/ && ./InstaSaveFarsiBot
