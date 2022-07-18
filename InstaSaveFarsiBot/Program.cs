@@ -11,7 +11,7 @@ Env.TraversePath().Load();
 
 
 var state = new ConversationState();
-var testAccId = Environment.GetEnvironmentVariable("TEST_ID");
+var testAccId = 444898015;
 
 
 var bot = new TelegramBotClient(BotConfiguration.BotToken);
