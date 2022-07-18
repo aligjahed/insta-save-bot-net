@@ -227,6 +227,9 @@ public static class CommandHandler
             chatId: callbackQuery.Message!.Chat.Id,
             text: DLMessage
             );
+        }else if (callbackQuery.Data == "/help")
+        {
+            await botClient.SendTextMessageAsync(chatId: callbackQuery.Message.Chat.Id, text: "راهنما :");
         }
 
         Message dataTransfer = new Message { Text = callbackQuery.Data };
