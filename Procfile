@@ -1,1 +1,1 @@
-cd $HOME/heroku_output && ./InstaSaveFarsiBot
+cd $HOME/heroku_output && cd ./InstaSaveFarsiBot
