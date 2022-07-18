@@ -11,7 +11,7 @@ Env.TraversePath().Load();
 
 
 var state = new ConversationState();
-
+var testAccId = Environment.GetEnvironmentVariable("TEST_ID");
 
 
 var bot = new TelegramBotClient(BotConfiguration.BotToken);
@@ -27,6 +27,8 @@ var receiverOptions = new ReceiverOptions()
     AllowedUpdates = Array.Empty<UpdateType>(),
     ThrowPendingUpdates = true,
 };
+
+await bot.SendTextMessageAsync(chatId: testAccId, text: "Bot started running");
 
 bot.StartReceiving(updateHandler: CommandHandler.HandleUpdateAsync,
                pollingErrorHandler: CommandHandler.PollingErrorHandler,

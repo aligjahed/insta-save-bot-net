@@ -61,6 +61,7 @@ public static class CommandHandler
         //};
 
 
+
         if (state.isDownload == true && message.Text != "/download")
         {
             await getPost(botClient, message);
@@ -139,7 +140,7 @@ public static class CommandHandler
                     return await botClient.SendVideoAsync(
                         chatId: message.Chat.Id,
                         video: (string)linkOBJ["video_url"],
-                        supportsStreaming: true ,
+                        supportsStreaming: true,
                         caption: captionText
                         );
                 }
